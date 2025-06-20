@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import rough from 'roughjs';
 import { useContext } from 'react';
 import boardContext from '../../store/board-context';
@@ -13,13 +13,13 @@ const Board = ()=>{
       toolAction, 
       handleBoardMouseUp
     } = useContext(boardContext);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const canvas = canvasRef.current;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }, []);
 
-  useEffect(() =>{
+  useLayoutEffect(() =>{
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       ctx.save();
