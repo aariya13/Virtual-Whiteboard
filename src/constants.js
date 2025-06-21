@@ -37,7 +37,7 @@ export const COLORS = {
   WHITE: "#ffffff",
 };
 
-export const TOOLBOX_ACTIONS = {
+export const COLORBAR_ACTIONS = {
   CHANGE_STROKE: "CHANGE_STROKE",
   CHANGE_FILL: "CHANGE_FILL",
   CHANGE_SIZE: "CHANGE_SIZE",
