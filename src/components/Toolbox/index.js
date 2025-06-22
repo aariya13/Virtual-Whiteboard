@@ -6,6 +6,7 @@ import { RiRectangleLine } from "react-icons/ri";
 import { FaSlash } from "react-icons/fa";
 import { FaRegCircle } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
+import { FaPaintBrush } from "react-icons/fa";
 
 import { TOOL_ITEMS } from '../../constants';
 import boardContext from '../../store/board-context';
@@ -15,6 +16,10 @@ export const Toolbox = () => {
     
   return (
     <div className={classes.container}>
+        <div className={cx(classes.toolItem, { [classes.active]: activeTool === TOOL_ITEMS.BRUSH})}
+        onClick={()=> handleToolClick(TOOL_ITEMS.BRUSH)}>
+            <FaPaintBrush />
+        </div>
         <div className={cx(classes.toolItem, { [classes.active]: activeTool === TOOL_ITEMS.RECTANGLE})}
         onClick={()=> handleToolClick(TOOL_ITEMS.RECTANGLE)}>
             <RiRectangleLine />

@@ -1,5 +1,6 @@
+import getStroke from 'perfect-freehand';
 import { TOOL_ITEMS, TOOL_ACTION_TYPES } from '../constants'
-import { createElement } from '../util/element';
+import { createElement, getSvgPathFromStroke } from '../util/element';
 import boardContext from './board-context'
 import { useReducer } from 'react'
 
@@ -12,35 +13,6 @@ const boardReducer=(state,action)=>{
                   activeTool: action.payload.tool,
               }
             }
-        case "DRAW_MOVE":
-          {
-            const {clientX, clientY, colorbarState} = action.payload;
-            const newElement = [...state.elements];
-            const index = state.elements.length - 1;
-
-            const element=createElement(
-              index,
-              newElement[index].x1,
-              newElement[index].y1,
-              clientX,
-              clientY,
-              {type: state.activeTool,
-                stroke: colorbarState[state.activeTool]?.stroke,
-                fill: colorbarState[state.activeTool]?.fill,
-                size: colorbarState[state.activeTool]?.size,
-               
-              },
-            )
-            newElement[index]=element;
-            return {
-                ...state,
-                elements: newElement,
-            }
-
-
-          }
-            
-
           case "DRAW_DOWN":
             {
               const { clientX, clientY,colorbarState } = action.payload;
@@ -62,6 +34,53 @@ const boardReducer=(state,action)=>{
                 toolAction: TOOL_ACTION_TYPES.DRAWING,
                 elements: [...state.elements, newElement],
             }
+          }
+        case "DRAW_MOVE":
+          {
+            const {clientX, clientY, colorbarState} = action.payload;
+            const newElement = [...state.elements];
+            const index = state.elements.length - 1;
+            const {type}=newElement[index];
+            switch(type){
+              case TOOL_ITEMS.LINE:
+              case TOOL_ITEMS.RECTANGLE:
+              case TOOL_ITEMS.CIRCLE:
+              case TOOL_ITEMS.ARROW:{
+                const element=createElement(
+                  index,
+                  newElement[index].x1,
+                  newElement[index].y1,
+                  clientX,
+                  clientY,
+                  {type: state.activeTool,
+                    stroke: colorbarState[state.activeTool]?.stroke,
+                    fill: colorbarState[state.activeTool]?.fill,
+                    size: colorbarState[state.activeTool]?.size,
+                  
+                  },
+                )
+                newElement[index]=element;
+                return {
+                    ...state,
+                    elements: newElement,
+                }
+              }
+              case TOOL_ITEMS.BRUSH:{
+                newElement[index].points=[
+                  ...newElement[index].points,{x:clientX, y:clientY}
+                ]
+                newElement[index].path= new Path2D(getSvgPathFromStroke(getStroke(newElement[index].points)));
+                return {
+                  ...state,
+                  elements: newElement
+                };
+
+              }
+              default:
+                break;
+              
+            }
+            break;
           }
         case "DRAW_UP":{
           return{

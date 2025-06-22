@@ -5,6 +5,11 @@ import { COLORBAR_ACTIONS, COLORS, TOOL_ITEMS } from "../constants";
 const colorbarReducer=(state,action)=>{
     switch(action.type){
         case "CHANGE_STROKE":{
+            const tool = action.payload.tool;
+            if (!state[tool]) {
+                console.warn(`Invalid tool: ${tool}`);
+                return state;
+            }
             const newState={...state};
             newState[action.payload.tool].stroke=action.payload.stroke;
             return newState;
@@ -25,6 +30,9 @@ const colorbarReducer=(state,action)=>{
 }
 
 const initialState={
+    [TOOL_ITEMS.BRUSH]:{
+        stroke: COLORS.BLACK
+    },
     [TOOL_ITEMS.LINE]:{
         stroke: COLORS.BLACK,
         size:1
