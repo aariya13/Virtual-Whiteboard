@@ -5,12 +5,22 @@ const gen=rough.generator();
 
 
 
-export const createElement =(id, x1,y1,x2,y2, {type})=>{
+export const createElement =(id, x1,y1,x2,y2, {type, stroke,fill,size})=>{
     const newElement = {
-        id,x1,y1,x2,y2,type
+        id,x1,y1,x2,y2,type,stroke,fill,size
     }
     let option={
         seed: id+1,
+        fillStyle: "solid",
+    }
+    if (stroke) {
+        option.stroke = stroke;
+    }
+    if (fill) {
+        option.fill = fill;
+    }
+    if (size) {
+        option.strokeWidth = size;
     }
     switch (type){
         case TOOL_ITEMS.LINE:{

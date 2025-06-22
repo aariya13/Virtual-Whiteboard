@@ -14,7 +14,7 @@ const boardReducer=(state,action)=>{
             }
         case "DRAW_MOVE":
           {
-            const {clientX, clientY} = action.payload;
+            const {clientX, clientY, colorbarState} = action.payload;
             const newElement = [...state.elements];
             const index = state.elements.length - 1;
 
@@ -24,7 +24,12 @@ const boardReducer=(state,action)=>{
               newElement[index].y1,
               clientX,
               clientY,
-              {type: state.activeTool},
+              {type: state.activeTool,
+                stroke: colorbarState[state.activeTool]?.stroke,
+                fill: colorbarState[state.activeTool]?.fill,
+                size: colorbarState[state.activeTool]?.size,
+               
+              },
             )
             newElement[index]=element;
             return {
@@ -38,7 +43,7 @@ const boardReducer=(state,action)=>{
 
           case "DRAW_DOWN":
             {
-              const { clientX, clientY } = action.payload;
+              const { clientX, clientY,colorbarState } = action.payload;
               
             const newElement =createElement(
               state.elements.length,
@@ -46,7 +51,11 @@ const boardReducer=(state,action)=>{
                clientY,
                clientX,
                clientY,
-               {type: state.activeTool}
+               {type: state.activeTool,
+                stroke: colorbarState[state.activeTool]?.stroke,
+                fill: colorbarState[state.activeTool]?.fill,
+                size: colorbarState[state.activeTool]?.size,
+               }
               )
             return{
                 ...state,
@@ -83,7 +92,7 @@ export const BoardPovider = ({children}) => {
       })
     };
 
-    const handleBoardMouseDown=(event)=>{
+    const handleBoardMouseDown=(event,colorbarState)=>{
         const clientX = event.clientX;
         const clientY = event.clientY;
         dispatchBoardAction({
@@ -91,12 +100,14 @@ export const BoardPovider = ({children}) => {
             payload:{
                 clientX,
                 clientY,
+                colorbarState
+
             }
 
         })
     }
     
-    const handleBoardMouseMove=(event)=>{
+    const handleBoardMouseMove=(event, colorbarState)=>{
         const clientX = event.clientX;
         const clientY = event.clientY;
         dispatchBoardAction({
@@ -104,6 +115,7 @@ export const BoardPovider = ({children}) => {
             payload:{
                 clientX,
                 clientY,
+                colorbarState
             }
         })
     }

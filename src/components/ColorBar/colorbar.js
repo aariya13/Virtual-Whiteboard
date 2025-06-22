@@ -1,17 +1,19 @@
 import React, { useContext } from 'react'
 import classes from "./colorbar.module.css"
-import { COLORS } from '../../constants';
+import { COLORS, FILL_TOOL_TYPES, SIZE_TOOL_TYPES, STROKE_TOOL_TYPES } from '../../constants';
 
 import cx from 'classnames'
 import colorbarContext from '../../store/colorbar-context';
 import boardContext from '../../store/board-context';
 const Colorbar = () => {
     const {activeTool}=useContext(boardContext)
-    const {colorbarState, handleStrokeColor}=useContext(colorbarContext)
+    const {colorbarState, handleStrokeColor, handleFillColor, handleSizeOption}=useContext(colorbarContext)
     const strokeColor= colorbarState[activeTool]?.stroke
+    const FillColor= colorbarState[activeTool]?.fill;
+    const size= colorbarState[activeTool]?.size;
   return (
     <div className={classes.container}>
-        <div className={classes.selectOptionContainer}>
+        {STROKE_TOOL_TYPES.includes(activeTool) && (<div className={classes.selectOptionContainer}>
             <div className={classes.colorBarLabel}>Stroke</div>
             <div className={classes.colorContainer}>
                 {Object.keys(COLORS).map((c)=>{
@@ -25,7 +27,34 @@ const Colorbar = () => {
                 })}
 
             </div>
+        </div>)}
+        {FILL_TOOL_TYPES.includes(activeTool) && (<div className={classes.selectOptionContainer}>
+            <div className={classes.colorBarLabel}>Fill</div>
+            <div className={classes.colorContainer}>
+                {Object.keys(COLORS).map((c)=>{
+                    return (
+                        <div 
+                        key={c}
+                        className={cx(classes.colorBox, {[classes.activeColorBox] : FillColor===COLORS[c]})}
+                        style={{backgroundColor: COLORS[c]}}
+                        onClick={()=>{handleFillColor(activeTool,COLORS[c])}}></div>
+                    );
+                })}
+
+            </div>
         </div>
+        )}
+        {SIZE_TOOL_TYPES.includes(activeTool) && (<div className={classes.selectOptionContainer}>
+            <div className={classes.colorBarLabel}>Size</div>
+            <input
+            type="range"
+            min={1}
+            max={10}
+            step={1}
+            value={size}
+            onChange={(event)=> handleSizeOption(activeTool, event.target.value)}
+            ></input>
+        </div>)}
     </div>
   )
 }

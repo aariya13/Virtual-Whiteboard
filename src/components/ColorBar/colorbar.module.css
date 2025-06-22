@@ -1,11 +1,11 @@
 .container{
-    @apply absolute top-1/2 left-5 text-xl border border-gray-400;
-    transform: translate(8px,8px);
+    @apply absolute top-1/4 left-3 text-sm border border-gray-400;
+    transform: translate(5px,5px);
     box-shadow: 1px 0px 8px rgba(0,0,0,1);
 }
 
 .selectOptionContainer{
-    @apply mb-6 last:mb-0 first:pt-5 last:pb-5 px-5;
+    @apply mb-5 last:mb-0 first:pt-3 last:pb-5 px-5;
 }
 
 .colorBarLabel{

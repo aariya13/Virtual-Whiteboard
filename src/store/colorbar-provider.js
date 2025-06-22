@@ -9,6 +9,16 @@ const colorbarReducer=(state,action)=>{
             newState[action.payload.tool].stroke=action.payload.stroke;
             return newState;
         }
+        case "CHANGE_FILL":{
+            const newState={...state};
+            newState[action.payload.tool].fill=action.payload.fill;
+            return newState;
+        }
+        case "CHANGE_SIZE":{
+            const newState={...state};
+            newState[action.payload.tool].size=action.payload.size;
+            return newState;
+        }
         default:
             throw new Error("Action not found");
     }
@@ -48,9 +58,31 @@ const ColorBarProvider=({children})=>{
         })
     }
 
+    const handleFillColor=(tool,fill)=>{
+        dispatchColorbarAction({
+            type: COLORBAR_ACTIONS.CHANGE_FILL,
+            payload:{
+                tool,
+                fill
+            }
+        })
+    }
+
+    const handleSizeOption=(tool,size)=>{
+        dispatchColorbarAction({
+            type: COLORBAR_ACTIONS.CHANGE_SIZE,
+            payload:{
+                tool,
+                size
+            }
+        })
+    }
+
     const colorbarValue={
         colorbarState,
-        handleStrokeColor
+        handleStrokeColor,
+        handleFillColor,
+        handleSizeOption,
     }
 
     return (
