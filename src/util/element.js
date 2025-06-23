@@ -1,6 +1,6 @@
 import { ARROW_LENGTH, TOOL_ITEMS } from "../constants"
 import rough from 'roughjs'
-import { getArrowHeadCoordinates } from "./math";
+import { getArrowHeadCoordinates, isPointNearLine } from "./math";
 import getStroke from "perfect-freehand";
 const gen=rough.generator();
 
@@ -65,6 +65,31 @@ export const createElement =(id, x1,y1,x2,y2, {type, stroke,fill,size})=>{
         default:
             throw new Error("Type is not recognised");
 
+    }
+}
+
+export const isPointNearElement=(clientX, clientY, element)=>{
+    const {x1,y1,x2,y2}=element;
+    const context = document.getElementById("canvas").getContext("2d");
+    switch(element.type){
+        case TOOL_ITEMS.LINE:
+        case TOOL_ITEMS.ARROW:{
+            return isPointNearLine(x1,y1,x2,y2,clientX,clientY);
+        }
+        case TOOL_ITEMS.RECTANGLE:
+        case TOOL_ITEMS.CIRCLE:{
+            return(
+                isPointNearLine(x1,y1,x2,y1,clientX,clientY)||
+                isPointNearLine(x1,y2,x2,y2,clientX,clientY)||
+                isPointNearLine(x2,y1,x2,y2,clientX,clientY)||
+                isPointNearLine(x1,y1,x1,y2,clientX,clientY)
+            )
+        }
+        case TOOL_ITEMS.BRUSH:{   
+            const path2D = new Path2D(element.path);
+            return context.isPointInPath(path2D, clientX,clientY);
+        }
+        default: break;
     }
 }
 

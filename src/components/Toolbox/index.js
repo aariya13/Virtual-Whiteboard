@@ -7,6 +7,7 @@ import { FaSlash } from "react-icons/fa";
 import { FaRegCircle } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import { FaPaintBrush } from "react-icons/fa";
+import { FaEraser } from "react-icons/fa";
 
 import { TOOL_ITEMS } from '../../constants';
 import boardContext from '../../store/board-context';
@@ -35,6 +36,10 @@ export const Toolbox = () => {
         <div className={cx(classes.toolItem, { [classes.active]: activeTool === TOOL_ITEMS.ARROW})}
         onClick={()=> handleToolClick(TOOL_ITEMS.ARROW)}>
             <FaArrowRight />
+        </div>
+        <div className={cx(classes.toolItem, { [classes.active]: activeTool === TOOL_ITEMS.ERASER})}
+        onClick={()=> handleToolClick(TOOL_ITEMS.ERASER)}>
+            <FaEraser />
         </div>
     </div>
   )
