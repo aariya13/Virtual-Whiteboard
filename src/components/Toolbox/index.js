@@ -3,7 +3,7 @@ import classes from './index.module.css';
 import cx from 'classnames';
 
 import { RiRectangleLine } from "react-icons/ri";
-import { FaSlash } from "react-icons/fa";
+import { FaDownload, FaSlash } from "react-icons/fa";
 import { FaRegCircle } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import { FaPaintBrush } from "react-icons/fa";
@@ -16,6 +16,15 @@ import boardContext from '../../store/board-context';
 
 export const Toolbox = () => {
     const {activeTool, handleToolClick,undo,redo} = useContext(boardContext)
+
+    const download=()=>{
+        const canvas=document.getElementById("canvas");
+        const data= canvas.toDataURL("image/png");
+        const anchor= document.createElement("a");
+        anchor.href=data;
+        anchor.download= "board.png";
+        anchor.click();
+    }
     
   return (
     <div className={classes.container}>
@@ -54,6 +63,10 @@ export const Toolbox = () => {
         <div className={classes.toolItem}
         onClick={redo}>
             <FaRedo />
+        </div>
+        <div className={classes.toolItem}
+        onClick={download}>
+            <FaDownload />
         </div>
     </div>
   )

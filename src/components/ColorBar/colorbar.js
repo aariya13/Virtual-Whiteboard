@@ -16,6 +16,15 @@ const Colorbar = () => {
         {STROKE_TOOL_TYPES.includes(activeTool) && (<div className={classes.selectOptionContainer}>
             <div className={classes.colorBarLabel}>Stroke</div>
             <div className={classes.colorContainer}>
+                <div>
+                    <input
+                        className={classes.colorPicker}
+                        type="color"
+                        value={strokeColor}
+                        onChange={(e)=> handleStrokeColor(activeTool,e.target.value)}
+                        
+                    />
+                </div>
                 {Object.keys(COLORS).map((c)=>{
                     return (
                         <div 
@@ -31,6 +40,29 @@ const Colorbar = () => {
         {FILL_TOOL_TYPES.includes(activeTool) && (<div className={classes.selectOptionContainer}>
             <div className={classes.colorBarLabel}>Fill</div>
             <div className={classes.colorContainer}>
+                {FillColor===null ? (
+                    <div
+                        className={cx(classes.colorPicker, classes.noFillColorBox)}
+                        onClick={() => handleFillColor(activeTool, COLORS.BLACK)}
+                    >
+                    </div>
+                ):
+                (<div>
+                    <input
+                        className={classes.colorPicker}
+                        type="color"
+                        value={strokeColor}
+                        onChange={(e)=> handleFillColor(activeTool,e.target.value)}
+                        
+                    />
+                </div>
+                )}
+                <div
+                className={cx(classes.colorBox, classes.noFillColorBox, {
+                    [classes.activeColorBox]: FillColor === null,
+                })}
+                onClick={() => handleFillColor(activeTool, null)}
+                ></div>
                 {Object.keys(COLORS).map((c)=>{
                     return (
                         <div 

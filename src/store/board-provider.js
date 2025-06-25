@@ -271,6 +271,8 @@ export const BoardPovider = ({children}) => {
         type: BOARD_ACTIONS.REDO
       })
     }
+
+    
     
     const boardContextValue = {
       activeTool: boardState.activeTool,

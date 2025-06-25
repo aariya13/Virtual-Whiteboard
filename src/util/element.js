@@ -81,7 +81,6 @@ export const isPointNearElement=(clientX, clientY, element)=>{
             return isPointNearLine(x1,y1,x2,y2,clientX,clientY);
         }
         case TOOL_ITEMS.RECTANGLE:
-        case TOOL_ITEMS.TEXT:
         case TOOL_ITEMS.CIRCLE:{
             return(
                 isPointNearLine(x1,y1,x2,y1,clientX,clientY)||
@@ -93,6 +92,23 @@ export const isPointNearElement=(clientX, clientY, element)=>{
         case TOOL_ITEMS.BRUSH:{   
             const path2D = new Path2D(element.path);
             return context.isPointInPath(path2D, clientX,clientY);
+        }
+        case TOOL_ITEMS.TEXT:{
+            context.font=`${element.size}px Cookie`
+            context.fillStyle= element.stroke;
+            const textWidth= context.measureText(element.text).width;
+            const textHeight= parseInt(element.size);
+            const top = y1;
+            const bottom = y1 + textHeight;
+            const left = x1;
+            const right = x1 + textWidth;
+
+            return (
+                isPointNearLine(left, top, right, top, clientX, clientY) || 
+                isPointNearLine(right, top, right, bottom, clientX, clientY) || 
+                isPointNearLine(right, bottom, left, bottom, clientX, clientY) ||
+                isPointNearLine(left, bottom, left, top, clientX, clientY)
+            );
         }
         default: break;
     }
