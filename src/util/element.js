@@ -62,6 +62,10 @@ export const createElement =(id, x1,y1,x2,y2, {type, stroke,fill,size})=>{
             newElement.roughElement=gen.linearPath(path,option);
             return newElement;
         }
+        case TOOL_ITEMS.TEXT:{
+            newElement.text="";
+            return newElement;
+        }
         default:
             throw new Error("Type is not recognised");
 
@@ -77,6 +81,7 @@ export const isPointNearElement=(clientX, clientY, element)=>{
             return isPointNearLine(x1,y1,x2,y2,clientX,clientY);
         }
         case TOOL_ITEMS.RECTANGLE:
+        case TOOL_ITEMS.TEXT:
         case TOOL_ITEMS.CIRCLE:{
             return(
                 isPointNearLine(x1,y1,x2,y1,clientX,clientY)||

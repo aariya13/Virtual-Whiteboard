@@ -8,6 +8,8 @@ import { FaRegCircle } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import { FaPaintBrush } from "react-icons/fa";
 import { FaEraser } from "react-icons/fa";
+import { IoText } from "react-icons/io5";
+import { FaUndo, FaRedo } from "react-icons/fa";
 
 import { TOOL_ITEMS } from '../../constants';
 import boardContext from '../../store/board-context';
@@ -41,6 +43,11 @@ export const Toolbox = () => {
         onClick={()=> handleToolClick(TOOL_ITEMS.ERASER)}>
             <FaEraser />
         </div>
+        <div className={cx(classes.toolItem, { [classes.active]: activeTool === TOOL_ITEMS.TEXT})}
+        onClick={()=> handleToolClick(TOOL_ITEMS.TEXT)}>
+            <IoText />
+        </div>
+        
     </div>
   )
 }

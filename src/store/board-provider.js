@@ -31,7 +31,7 @@ const boardReducer=(state,action)=>{
               )
             return{
                 ...state,
-                toolAction: TOOL_ACTION_TYPES.DRAWING,
+                toolAction: (state.activeTool=== TOOL_ITEMS.TEXT) ? TOOL_ACTION_TYPES.WRITING:TOOL_ACTION_TYPES.DRAWING,
                 elements: [...state.elements, newElement],
             }
           }
@@ -82,12 +82,6 @@ const boardReducer=(state,action)=>{
             }
             break;
           }
-        case "DRAW_UP":{
-          return{
-            ...state,
-            toolAction: TOOL_ACTION_TYPES.NONE,
-          }
-        }
         case BOARD_ACTIONS.CHANGE_ACTION_TYPE:{
           return{
             ...state,
@@ -105,15 +99,43 @@ const boardReducer=(state,action)=>{
             elements:newElement,
           }
         }
+        case BOARD_ACTIONS.CHANGE_TEXT:{
+          
+          const { text, stroke, size } = action.payload;
+          const newElement=[...state.elements];
+          const index=state.elements.length -1;
+          newElement[index].text= text;
+          const newHistory = state.history.slice(0, state.index+1);
+          newHistory.push(newElement);
+        if (stroke) newElement[index].stroke = stroke;
+        if (size) newElement[index].size = size;
+          return{
+            ...state,
+            toolAction: TOOL_ACTION_TYPES.NONE,
+            elements: newElement,
+          }
+        }
+        case BOARD_ACTIONS.DRAW_UP:{
+          const elementCopy = [...state.element];
+          const newHistory = state.history.slice(0, state.index+1);
+          newHistory.push(elementCopy);
+          return{
+            ...state,
+            history: newHistory,
+            index: state.index+1,
+          }
+        }
         default:
             return state;
     }
 }
 
 const initialState = {
-  activeTool: TOOL_ITEMS.LINE,
+  activeTool: TOOL_ITEMS.BRUSH,
   toolAction: TOOL_ACTION_TYPES.NONE,
   elements: [],
+  history: [[]],
+  index: 0
 }
 export const BoardPovider = ({children}) => {
     const [boardState, dispatchBoardAction]= useReducer(boardReducer, initialState);
@@ -131,6 +153,10 @@ export const BoardPovider = ({children}) => {
     const handleBoardMouseDown=(event,colorbarState)=>{
         const clientX = event.clientX;
         const clientY = event.clientY;
+        if (boardState.toolAction === TOOL_ACTION_TYPES.WRITING) {
+          // Don't allow new element while typing in textarea
+          return;
+        }
         //console.log("YES");
         if(boardState.activeTool===TOOL_ITEMS.ERASER){
           dispatchBoardAction({
@@ -141,6 +167,7 @@ export const BoardPovider = ({children}) => {
           })
           return;
         }
+        
         dispatchBoardAction({
             type:"DRAW_DOWN",
             payload:{
@@ -154,6 +181,7 @@ export const BoardPovider = ({children}) => {
     }
     
     const handleBoardMouseMove=(event, colorbarState)=>{
+      if(boardState.activeTool=== TOOL_ITEMS.TEXT)return;
         const clientX = event.clientX;
         const clientY = event.clientY;
       if (boardState.toolAction === TOOL_ACTION_TYPES.DRAWING) {
@@ -178,10 +206,36 @@ export const BoardPovider = ({children}) => {
     }
     
     const handleBoardMouseUp=()=>{
+      if(TOOL_ACTION_TYPES.WRITING) return;
+      if(TOOL_ACTION_TYPES.DRAWING){
         dispatchBoardAction({
-            type:"DRAW_UP",
+          type: BOARD_ACTIONS.DRAW_UP
+
         })
       }
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
+        payload:{
+          actionType:TOOL_ACTION_TYPES.NONE
+        }
+          
+        
+      })
+    }
+    
+    const handleTextArea=(text,colorbarState)=>{
+      const color = colorbarState[TOOL_ITEMS.TEXT]?.stroke;
+      const size = colorbarState[TOOL_ITEMS.TEXT]?.size;
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.CHANGE_TEXT,
+        payload:{
+          text,
+          stroke: color,
+          size,
+
+        }
+      })
+    }
     
     const boardContextValue = {
       activeTool: boardState.activeTool,
@@ -191,6 +245,7 @@ export const BoardPovider = ({children}) => {
       handleBoardMouseDown,
       handleBoardMouseMove,
       handleBoardMouseUp,
+      handleTextArea,
     }
 
   return (

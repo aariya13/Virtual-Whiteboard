@@ -1,17 +1,21 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import rough from 'roughjs';
 import { useContext } from 'react';
 import boardContext from '../../store/board-context';
-import {  TOOL_ITEMS } from '../../constants';
+import {  TOOL_ACTION_TYPES, TOOL_ITEMS } from '../../constants';
 import colorbarContext from '../../store/colorbar-context';
+import classes from './index.module.css'
 
 const Board = ()=>{
     const canvasRef = useRef(null);
+    const textRef=useRef(null);
     const {
       elements, 
       handleBoardMouseDown, 
       handleBoardMouseMove,
-      handleBoardMouseUp
+      handleBoardMouseUp,
+      toolAction,
+      handleTextArea
     } = useContext(boardContext);
 
     const {colorbarState}=useContext(colorbarContext);
@@ -38,6 +42,15 @@ const Board = ()=>{
           case TOOL_ITEMS.BRUSH:{
             ctx.fillStyle=el.stroke;
             ctx.fill(el.path);
+            
+            ctx.restore();
+            break;
+          }
+          case TOOL_ITEMS.TEXT:{
+            ctx.textBaseline = "top";
+            ctx.font = `${el.size}px Cookie`;
+            ctx.fillStyle = el.stroke;
+            ctx.fillText(el.text, el.x1, el.y1);
             ctx.restore();
             break;
           }
@@ -54,6 +67,14 @@ const Board = ()=>{
     handleBoardMouseDown(event,colorbarState);
   }
 
+  useEffect(()=>{
+    if(toolAction===TOOL_ACTION_TYPES.WRITING){
+      setTimeout(() => {
+        textRef.current.focus();
+      }, 0);
+    }
+  }, [toolAction])
+
 
   const handleMove = (event) => {
       handleBoardMouseMove(event,colorbarState);
@@ -64,6 +85,22 @@ const Board = ()=>{
   }
   return (
     <div>
+      {
+        toolAction=== TOOL_ACTION_TYPES.WRITING && (
+          <textarea
+            ref={textRef}
+            className={classes.textElementBox}
+            type="text"
+            style={{
+              top: elements[elements.length-1].y1,
+              left: elements[elements.length-1].x1,
+              fontSize: `${elements[elements.length-1]?.size}px`,
+              color: colorbarState[TOOL_ITEMS.TEXT]?.stroke
+            }}
+            onBlur={(event)=>{handleTextArea(event.target.value,colorbarState)}}
+          />
+        )
+      }
       <canvas ref={canvasRef}  
       id="canvas"
       onMouseDown={handleMouseDown}

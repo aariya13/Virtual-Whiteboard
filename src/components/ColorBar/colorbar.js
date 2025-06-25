@@ -1,6 +1,6 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import classes from "./colorbar.module.css"
-import { COLORS, FILL_TOOL_TYPES, SIZE_TOOL_TYPES, STROKE_TOOL_TYPES } from '../../constants';
+import { COLORS, FILL_TOOL_TYPES, SIZE_TOOL_TYPES, STROKE_TOOL_TYPES, TOOL_ITEMS } from '../../constants';
 
 import cx from 'classnames'
 import colorbarContext from '../../store/colorbar-context';
@@ -48,8 +48,8 @@ const Colorbar = () => {
             <div className={classes.colorBarLabel}>Size</div>
             <input
             type="range"
-            min={1}
-            max={10}
+            min={activeTool===TOOL_ITEMS.TEXT ? 12 : 1}
+            max={activeTool===TOOL_ITEMS.TEXT ? 62 : 10}
             step={1}
             value={size}
             onChange={(event)=> handleSizeOption(activeTool, event.target.value)}
