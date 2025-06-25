@@ -15,7 +15,7 @@ import { TOOL_ITEMS } from '../../constants';
 import boardContext from '../../store/board-context';
 
 export const Toolbox = () => {
-    const {activeTool, handleToolClick} = useContext(boardContext)
+    const {activeTool, handleToolClick,undo,redo} = useContext(boardContext)
     
   return (
     <div className={classes.container}>
@@ -47,7 +47,14 @@ export const Toolbox = () => {
         onClick={()=> handleToolClick(TOOL_ITEMS.TEXT)}>
             <IoText />
         </div>
-        
+        <div className={classes.toolItem}
+        onClick={undo}>
+            <FaUndo />
+        </div>
+        <div className={classes.toolItem}
+        onClick={redo}>
+            <FaRedo />
+        </div>
     </div>
   )
 }

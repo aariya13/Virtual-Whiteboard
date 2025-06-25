@@ -94,9 +94,14 @@ const boardReducer=(state,action)=>{
           newElement=newElement.filter((element)=>{
             return !isPointNearElement(clientX,clientY,element);
           })
+          
+          const newHistory = state.history.slice(0, state.index+1);
+          newHistory.push(newElement);
           return {
             ...state,
             elements:newElement,
+            history: newHistory,
+            index: state.index + 1,
           }
         }
         case BOARD_ACTIONS.CHANGE_TEXT:{
@@ -105,23 +110,41 @@ const boardReducer=(state,action)=>{
           const newElement=[...state.elements];
           const index=state.elements.length -1;
           newElement[index].text= text;
+          if (stroke) newElement[index].stroke = stroke;
+          if (size) newElement[index].size = size;
           const newHistory = state.history.slice(0, state.index+1);
           newHistory.push(newElement);
-        if (stroke) newElement[index].stroke = stroke;
-        if (size) newElement[index].size = size;
           return{
             ...state,
             toolAction: TOOL_ACTION_TYPES.NONE,
             elements: newElement,
+            history: newHistory,
+            index: state.index + 1,
           }
         }
         case BOARD_ACTIONS.DRAW_UP:{
-          const elementCopy = [...state.element];
+          const elementCopy = [...state.elements];
           const newHistory = state.history.slice(0, state.index+1);
           newHistory.push(elementCopy);
           return{
             ...state,
             history: newHistory,
+            index: state.index+1,
+          }
+        }
+        case BOARD_ACTIONS.UNDO:{
+          if(state.index <= 0)return state;
+          return{
+            ...state,
+            elements: state.history[state.index - 1],
+            index: state.index-1,
+          }
+        }
+        case BOARD_ACTIONS.REDO:{
+          if(state.index >= state.history.length -1 )return state;
+          return{
+            ...state,
+            elements: state.history[state.index+1],
             index: state.index+1,
           }
         }
@@ -206,8 +229,9 @@ export const BoardPovider = ({children}) => {
     }
     
     const handleBoardMouseUp=()=>{
-      if(TOOL_ACTION_TYPES.WRITING) return;
-      if(TOOL_ACTION_TYPES.DRAWING){
+      if (boardState.toolAction === TOOL_ACTION_TYPES.WRITING) return;
+
+      if (boardState.toolAction === TOOL_ACTION_TYPES.DRAWING) {
         dispatchBoardAction({
           type: BOARD_ACTIONS.DRAW_UP
 
@@ -236,6 +260,17 @@ export const BoardPovider = ({children}) => {
         }
       })
     }
+
+    const handleUndo=()=>{
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.UNDO
+      })
+    }
+    const handleRedo=()=>{
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.REDO
+      })
+    }
     
     const boardContextValue = {
       activeTool: boardState.activeTool,
@@ -246,6 +281,8 @@ export const BoardPovider = ({children}) => {
       handleBoardMouseMove,
       handleBoardMouseUp,
       handleTextArea,
+      undo: handleUndo,
+      redo: handleRedo,
     }
 
   return (

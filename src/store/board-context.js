@@ -11,6 +11,8 @@ const boardContext = createContext({
   handleBoardMouseMove: () => {},
   handleBoardMouseUp: ()=>{},
   handleTextArea: ()=>{},
+  undo: ()=>{},
+  redo: ()=>{},
 });
 
 export default boardContext;
