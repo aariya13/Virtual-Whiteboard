@@ -15,7 +15,9 @@ const Board = ()=>{
       handleBoardMouseMove,
       handleBoardMouseUp,
       toolAction,
-      handleTextArea
+      handleTextArea,
+      undo,
+      redo
     } = useContext(boardContext);
 
     const {colorbarState}=useContext(colorbarContext);
@@ -62,6 +64,22 @@ const Board = ()=>{
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       };
   }, [elements]);
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.ctrlKey && event.key === "z") {
+        undo();
+      } else if (event.ctrlKey && event.key === "y") {
+        redo();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [undo, redo]);
 
   const handleMouseDown= (event)=>{
     handleBoardMouseDown(event,colorbarState);
